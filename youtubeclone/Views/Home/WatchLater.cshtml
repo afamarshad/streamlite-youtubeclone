@@ -1,0 +1,111 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using youtubeclone.Models
+@model Tuple<List<FileModel>>
+@{
+    ViewBag.Title = "Watch Later";
+}
+
+@if (Model.Item1 != null)
+{
+    <div class="container">
+        <div class="row">
+            <h2>Watch Later</h2>
+            @using (Html.BeginForm("ClearWatchlater", "Home", FormMethod.Post))
+            {
+                <input class="btn btn-danger" type="submit" value="Remove Watched Videos" />
+            }
+        </div>
+        <div class="container" style="margin-top:20px;text-align:center;">
+            <div class="table-responsive" style="margin:0 auto;">
+                <table class="table table-striped table-bordered display" id="example" style="width:50%">
+                    <thead>
+                        <tr>
+                            <th>Video</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Date/Time Uploaded</th>
+                            <th>Views</th>
+                            <th>Likes</th>
+                            <th>Dislikes</th>
+                            <th>Comments</th>
+                            <td>Delete</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (FileModel file in Model.Item1)
+                        {
+                            <tr class="odd">
+                                <td>
+                                    @using (Html.BeginForm("Video", "Home", FormMethod.Get))
+                                    {
+                                        <input type="number" name="VideoID" value="@file.video_id" style="display:none;visibility:hidden;" required />
+                                        <button class="row btn" type="submit" id="btnVideo" style="margin-top:20px;background:transparent;">
+
+                                            <div class="video-section">
+                                                <video style="width:150px;height:100px;" onmouseover="this.play()" onmouseout="this.pause();" muted="muted">
+                                                    <source class="player" src="@Url.Content(file.video_path)" type="video/mp4;codecs='hvc1'" />
+                                                </video>
+                                            </div>
+
+                                        </button>
+                                    }
+                                </td>
+                                <td>
+                                    <bold><h5 class="text-left" style="color:black;">@file.video_title</h5></bold>
+                                </td>
+                                <td>
+                                    <p class="text-left" style="color:grey;">@file.video_desc</p>
+                                </td>
+                                <td>
+                                    <p class="text-left" style="color:grey;">@file.publish_datetime</p>
+                                </td>
+                                <td>
+                                    <p class="text-left" style="color:grey;">@file.video_views views</p>
+                                </td>
+                                <td>
+                                    <p class="text-left" style="color:grey;">@file.video_likes</p>
+                                </td>
+                                <td>
+                                    <p class="text-left" style="color:grey;">@file.video_dislikes</p>
+                                </td>
+                                <td>
+                                    <p class="text-left" style="color:grey;">@file.total_comments</p>
+                                </td>
+                                @using (Html.BeginForm("DeleteVideoFromWatchlater", "Home", FormMethod.Get))
+                                {
+                                    <td>
+                                        <input type="number" name="id" value="@file.video_id" style="display:none;visibility:hidden;" required />
+                                        <button class="btn btn-danger" type="submit" id="btnDelete">Delete</button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+@section scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#example").DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true
+            });
+        });
+
+    </script>
+
+}
+

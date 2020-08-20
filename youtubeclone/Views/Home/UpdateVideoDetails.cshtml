@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using youtubeclone.Models
+@model Tuple<List<FileModel>>
+
+@foreach (FileModel file in Model.Item1)
+{
+<div class="container" style="margin-top:50px;">
+    <h1>Edit Video Details</h1><br />
+    <div class="container">
+        @using (Html.BeginForm("updatevideo", "Home", FormMethod.Post))
+        {
+            <label>Video Title:</label>
+            <input type="number" name="VideoID" value="@file.video_id" style="display:none;visibility:hidden;" required />
+            <input class="text-left" name="videotitle" style="color:black;margin-left:55px;" value="@file.video_title" required /><br />
+            <br />
+            <label>Video Description:</label>
+            <input class="text-left" name="videodesc" style="color:black;margin-left:10px;" value="@file.video_desc" required />
+            <br /><br />
+            <button class="btn btn-info" type="submit" id="btnVideoUpdate" >Update</button>
+        }
+    </div>
+</div>
+    }

@@ -1,0 +1,574 @@
+﻿@{
+    /**/
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using youtubeclone.Models
+@model Tuple<List<FileModel>, List<PlaylistModel>, List<ChannelModel>, List<ChannelModel>>
+@{
+    ViewBag.Title = "Your Channel";
+}
+
+<style>
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 30px;
+    }
+
+    .wrapperforchannel {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+    }
+
+    .carousel-control {
+        z-index: 10;
+        top: 2%;
+        width: 30px;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        interval: false
+    }
+
+        .carousel-control.left, .carousel-control.right {
+            background: none;
+            color: black;
+            margin: -5px;
+        }
+</style>
+
+@if (ViewBag.channelcount != 0)
+{
+    foreach (ChannelModel channel in Model.Item3)
+    {
+        <div class="jumbotron" style="background-image: url(@channel.channel_cover_pic); background-size: cover;">
+
+
+        </div><hr /><br />
+
+        <div class="row" style="margin-bottom:20px;">
+            <div class="text-left col-sm-2">
+                <img class="img-responsive center-block img-circle" src="@channel.channel_profile_pic" alt="profile pic" height="50px" width="100px">
+            </div>
+            <div class="col-sm-3" style="margin-top:30px;">
+                <h3 style="color:black;">@channel.channel_name</h3>
+            </div>
+        </div>
+        <hr />
+        if (TempData["videoupdated"] != null)
+        {
+            if (!TempData["videoupdated"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Video Updated Successfully!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error Updating Video!</h3> <hr />
+            }
+
+        }
+        if (TempData["removevideofromplaylist"] != null)
+        {
+            if (!TempData["removevideofromplaylist"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Video Removed From Playlist!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error Removing Video From Playlist!</h3> <hr />
+            }
+
+        }
+        if (TempData["videodeleted"] != null)
+        {
+            if (!TempData["videodeleted"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Video Deleted Successfully!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error Deleting Video!</h3> <hr />
+            }
+
+        }
+        if (TempData["removesubscriptionfromyourchannel"] != null)
+        {
+            if (!TempData["removesubscriptionfromyourchannel"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Channel Unsubscribed!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error removing subscription!</h3> <hr />
+            }
+
+        }
+        if (TempData["addvideotoplaylist"] != null)
+        {
+            if (!TempData["addvideotoplaylist"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Video Added to Playlist!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error adding video to Playlist!</h3> <hr />
+            }
+
+        }
+        if (TempData["playlistcreated"] != null)
+        {
+            if (!TempData["playlistcreated"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Playlist Created Successfully!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error creating playlist!</h3> <hr />
+            }
+
+        }
+        if (TempData["playlistupdated"] != null)
+        {
+            if (!TempData["playlistupdated"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Playlist Updated Successfully!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error updating playlist!</h3> <hr />
+            }
+
+        }
+        if (TempData["playlistdeleted"] != null)
+        {
+            if (!TempData["playlistdeleted"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Playlist Deleted Successfully!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error deleting playlist!</h3> <hr />
+            }
+
+        }
+        if (TempData["channeldetailsupdated"] != null)
+        {
+            if (!TempData["channeldetailsupdated"].Equals("error"))
+            {
+                <h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Channel Details Updated Successfully!</h4> <hr />
+            }
+            else
+            {
+                <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error updating channel details!</h3> <hr />
+            }
+
+        }
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">HOME</a></li>
+            <li role="presentation"><a href="#video" aria-controls="video" role="tab" data-toggle="tab">VIDEOS</a></li>
+            <li role="presentation"><a href="#subscriptions" aria-controls="subscriptions" role="tab" data-toggle="tab">SUBSCRIPTIONS</a></li>
+            <li role="presentation"><a href="#playlist" aria-controls="playlist" role="tab" data-toggle="tab">PLAYLIST</a></li>
+            <li role="presentation"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">ABOUT</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+                <h3 style="color:black;float:left;">
+                    Channel analytics
+                </h3>
+                <br /><br /><br /><br />
+                <div class="mw-100 row center-block" style="color:black;">
+                    <button class="btn btn-default col-md-6 disabled" style="font-size:20px;">
+                        Views<br />
+                        @if (TempData["currentchannelviews"] != null)
+                        {
+                            <p>@TempData["currentchannelviews"].ToString()</p>
+                        }
+                        else
+                        {
+                            <p>-</p>
+                        }
+                    </button>
+                    <button class="btn btn-default col-md-6 disabled" style="font-size:20px;">
+                        Subscribers<br />
+                        @if (TempData["subscribersofcurrentchannel"] != null)
+                        {
+                            <p>@TempData["subscribersofcurrentchannel"].ToString()</p>
+                        }
+                        else
+                        {
+                            <p>-</p>
+                        }
+                    </button>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="video">
+                <div class="wrapper" style="margin-top:20px;">
+                    <div class="container">
+                        <br />
+                        <div class="table-responsive" style="width:100%; margin:0 auto;">
+                            <table class="table table-striped table-bordered display" id="example">
+                                <thead>
+                                    <tr>
+                                        <th>Video</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Last Updated</th>
+                                        <th>Views</th>
+                                        <th>Likes</th>
+                                        <th>Dislikes</th>
+                                        <th>Comments</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
+                                        <th>Add To Playlist</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (FileModel file in Model.Item1)
+                                    {
+                                    <tr class="odd">
+                                        <td>
+                                            @using (Html.BeginForm("Video", "Home", FormMethod.Get))
+                                            {
+                                                <input type="number" name="VideoID" value="@file.video_id" style="display:none;visibility:hidden;" required />
+                                                <button class="row btn" type="submit" id="btnVideo" style="margin-top:20px;background:transparent;">
+
+                                                    <div class="video-section">
+                                                        <video style="width:150px;height:100px;" onmouseover="this.play()" onmouseout="this.pause();" muted="muted">
+                                                            <source class="player" src="@Url.Content(file.video_path)" type="video/mp4" />
+                                                        </video>
+                                                    </div>
+
+                                                </button>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            <bold><p class="text-left" style="color:black;">@file.video_title</p></bold>
+                                        </td>
+                                        <td>
+                                            <p class="text-left" style="color:grey;">@file.video_desc</p>
+                                        </td>
+
+                                        <td>
+                                            <p class="text-left" style="color:grey;">@file.publish_datetime</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-left" style="color:grey;">@file.video_views views</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-left" style="color:grey;">@file.video_likes</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-left" style="color:grey;">@file.video_dislikes</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-left" style="color:grey;">@file.total_comments</p>
+                                        </td>
+                                        <td>
+                                            @using (Html.BeginForm("UpdateVideoDetails", "Home", FormMethod.Post))
+                                            {
+                                                <input type="number" name="VideoID" value="@file.video_id" style="display:none;visibility:hidden;" required />
+                                                <button class="btn btn-info" type="submit" id="update">Update</button>
+                                            }
+                                        </td>
+                                        @using (Html.BeginForm("DeleteVideo", "Home", FormMethod.Get))
+                                        {
+                                            <td>
+                                                <input type="number" name="channelid" value="@file.channel_id" style="display:none;visibility:hidden;" required />
+
+                                                <input type="number" name="id" value="@file.video_id" style="display:none;visibility:hidden;" required />
+                                                <button class="form-control btn-danger center-block" type="submit" id="btnDelete" onclick="if (confirm('Are you sure you want to delete video titled @file.video_title permanently from your channel?')){return true;}else{event.stopPropagation(); event.preventDefault();};"> Delete</button>
+
+                                            </td>
+                                        }
+                                        @if (file.playlist_id.Equals(0))
+                                        {
+                                            using (Html.BeginForm("AddVideoToPlaylist", "Home", FormMethod.Get))
+                                            {
+                                                <td>
+                                                    <input type="number" name="channelid" value="@file.channel_id" style="display:none;visibility:hidden;" required />
+
+                                                    <input type="number" name="id" value="@file.video_id" style="display:none;visibility:hidden;" required />
+                                                    <button class="form-control btn-info center-block" type="submit" id="btnAddVideo" style="margin:5px;">Add</button>
+
+                                                </td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td><p>No Action</p></td>
+                                        }
+
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="subscriptions">
+                <h3>Subscribed Channels</h3>
+                <hr />
+                <div class="table-responsive" style="margin:0 auto;">
+                    <table class="table table-striped table-bordered display" id="subsctiptiontable" style="width:50%">
+                        <thead>
+                            <tr>
+                                <th>Channel Profile Picture</th>
+                                <th>Channel Name</th>
+                                <th>Channel Subscribers</th>
+                                <th>Remove Subscription</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (ChannelModel channelsub in Model.Item4)
+                            {
+                                <tr class="odd">
+                                    <td>
+                                        @using (Html.BeginForm("Channel", "Home", FormMethod.Get))
+                                        {
+
+                                            <input type="number" name="ChannelID" value="@channelsub.channel_id" style="display:none;visibility:hidden;" required />
+                                            <button class="row btn" type="submit" id="btnChannel" style="margin-top:20px;background:transparent;">
+
+                                                <img class="img-responsive img-circle" src="@channelsub.channel_profile_pic" alt="ProfilePic" height="100" width="100">
+
+                                            </button>
+                                        }
+                                    </td>
+                                    <td>
+                                        <p>@channelsub.channel_name</p>
+                                    </td>
+                                    <td>
+                                        <p>@channelsub.Subscribers Subscribers</p>
+                                    </td>
+
+
+                                    @using (Html.BeginForm("RemoveSubscriptionYourChannelRedirect", "Home", FormMethod.Post))
+                                    {
+                                        <td>
+                                            <input type="number" name="Channelid" value="@channelsub.channel_id" style="display:none;visibility:hidden;" required />
+                                            <input class="col-sm-10 btn btn-danger" type="submit" value="UnSubscribe" />
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="playlist">
+                <div class="row" style="margin-top:20px;">
+                    <div class="container center-block">
+                        <hr /><h5 class="center-block">CREATE NEW PLAYLIST</h5><hr />
+                        @using (Html.BeginForm("AddPlaylist", "Home", FormMethod.Post, new
+                        {
+                            enctype = "multipart/form-data"
+                        }))
+                        {
+                            <input type="number" name="channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" />
+
+                            @Html.TextBox("Playlistname", null, new { @class = "form-control center-block", placeholder = "Enter Playlist Name", required = "true" })
+                            <br />
+                            @Html.TextBox("Playlistdesc", null, new { @class = "form-control center-block", placeholder = "Enter Playlist Description", required = "true" })
+                            <br />
+
+                            <input class="form-control btn-primary center-block" type="submit" value="Create Playlist" />
+                        }
+                    </div><hr />
+                    <div class="row">
+                        <div class="col-md-11">
+                            @if (!(Model.Item2.Equals(null)))
+                            {
+                                <h5>YOUR PLAYLISTS</h5><hr />
+                            }
+
+                            <div class="table-responsive" style="margin:0 auto;">
+
+                                <table class="table table-striped table-bordered display" id="playlisttable" style="width:50%">
+                                    <thead>
+                                        <tr>
+                                            <th>Profile Picture</th>
+                                            <th>Playlist Name</th>
+                                            <th>Playlist Description</th>
+                                            <th>Update Action</th>
+                                            <th>Delete Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (PlaylistModel item in Model.Item2)
+                                        {
+                                            <tr class="odd">
+                                                <td>
+                                                    @using (Html.BeginForm("PlaylistPage", "Home", FormMethod.Get))
+                                                    {
+                                                        <input type="number" name="PlaylistID" value="@item.playlist_id" style="display:none;visibility:hidden;" required />
+                                                        <button class="row btn" type="submit" id="btnVideo" style="margin-top:20px;background:transparent;">
+                                                            <img class="img-responsive img-circle" src="~/Content/images/channelprofileimage.png" alt="ProfilePic" height="100" width="100" required>
+                                                        </button>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <p>@item.playlist_name</p>
+                                                </td>
+                                                <td>
+                                                    <p>@item.playlist_desc</p>
+                                                </td>
+                                                <td>
+                                                    @using (Html.BeginForm("UpdatePlaylistDetails", "Home", FormMethod.Post))
+                                                    {
+                                                        <input type="number" name="playlistID" value="@item.playlist_id" style="display:none;visibility:hidden;" required />
+                                                        <button class="btn btn-info" type="submit" id="updateplaylist">Update</button>
+                                                    }
+                                                </td>
+                                                @using (Html.BeginForm("DeletePlaylist", "Home", FormMethod.Post))
+                                                {
+                                                    <td>
+                                                        <input type="number" name="PlaylistID" value="@item.playlist_id" style="display:none;visibility:hidden;" required />
+                                                        <button class="form-control btn-danger center-block" type="submit" id="deleteplaylist" onclick="if (confirm('Are you sure you want to delete playlist titled @item.playlist_name It may contain videos that will also be deleted?')){return true;}else{event.stopPropagation(); event.preventDefault();};"> Delete</button>
+
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="about">
+                <h3 class="center-block" style="color:darkslategrey;">Update Public Channel Details</h3>
+                <div class="row">
+                    <label style="margin-top:20px;">Enter new channel name:</label>
+                    @using (Html.BeginForm("ChangeChannelName", "Home", FormMethod.Post))
+                    {
+                        <input type="number" name="Channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" />
+                        <input name="Channelname" style="color:black;" value="@channel.channel_name" required />
+                        <button class="btn btn-info">Change</button>
+                    }
+                </div>
+                <div class="row">
+                    <label style="margin-top:20px;">Choose a new cover photo:</label>
+                    @using (Html.BeginForm("ChangeCoverPic", "Home", FormMethod.Post, new
+                    {
+                        enctype = "multipart/form-data"
+                    }))
+                    {
+                        <input type="file" name="CoverPic" value="@channel.channel_cover_pic" style="display:none;visibility:hidden;" />
+                        <input type="number" name="Channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" />
+                        <input style="display:inline-block" class="form-control" type="file" name="NewCover" id="NewCover" accept="image/*" required />
+                        <button class="btn btn-info">Change</button>
+                    }
+                </div>
+                <div class="row">
+                    <label style="margin-top:20px;">Choose a new profile photo:</label>
+                    @using (Html.BeginForm("ChangeProfilePic", "Home", FormMethod.Post, new
+                    {
+                        enctype = "multipart/form-data"
+                    }))
+                    {
+                        <input type="file" name="ProfilePic" value="@channel.channel_profile_pic" style="display:none;visibility:hidden;" />
+                        <input type="number" name="Channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" />
+
+                        <input style="display:inline-block" class="form-control" type="file" name="NewProfile" id="NewProfile" accept="image/*" required />
+                        <button class="btn btn-info">Change</button>
+
+                    }
+                </div>
+                <div class="row">
+                    <label style="margin-top:20px;">Description</label>
+                    @using (Html.BeginForm("ChangeChannelDesc", "Home", FormMethod.Post))
+                    {
+                        <input type="number" name="Channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" required />
+                        <textarea type="text" style="overflow:scroll;display:inline-block;" class="form-control" id="Channeldesc" name="Channeldesc" rows="2" cols="20" required>@channel.channel_desc</textarea>
+                        <button class="btn btn-info">Change</button>
+                    }
+
+                </div>
+                <div class="row">
+                    <label style="margin-top:20px;">Enter New Email address:</label>
+                    @using (Html.BeginForm("ChangeChannelEmail", "Home", FormMethod.Post))
+                    {
+                        <input type="number" name="Channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" required />
+                        <input type="text" name="ChannelEmail" style="color:black;display:inline-block;" class="form-control" value="@channel.email" required /><br />
+                        <button class="btn btn-info">Change</button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+}
+else if (ViewBag.channelcount == 0)
+{
+    <div class="container" style="margin:50px;">
+        <h1 class="center-block">Oops you need a create a channel to view this page!</h1>
+        <h3 class="center-block">CREATE A CHANNEL?</h3>
+        @if (TempData["ChannelError"] != null)
+        {
+            <h3 class="danger text-danger">@TempData["ChannelError"].ToString()</h3>
+        }
+        @if (TempData["ChannelSuccess"] != null)
+        {
+            <h3 class="success text-success">@TempData["ChannelSuccess"].ToString()</h3>
+        }
+        @using (Html.BeginForm("AddChannel", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <label class="center-block" for="Channelname">Channel Name:</label>
+            @Html.TextBox("Channelname", null, new { @class = "form-control center-block", placeholder = "Enter Channel Name", id = "Channelname", required = "true" })
+            <br />
+            <label class="center-block" for="profilepic">Profile Picture:</label>
+            @Html.TextBox("profilepic", null, new { @class = "form-control center-block", placeholder = "Choose profile pic", id = "profilepic", required = "true", type = "file", accept = "image/*" })
+            <br />
+            <label class="center-block" for="coverpic">Cover Photo:</label>
+            @Html.TextBox("coverpic", null, new { @class = "form-control center-block", placeholder = "Choose cover pic", id = "coverpic", required = "true", type = "file", accept = "image/*" })
+            <br />
+            <label class="center-block" for="Channeldesc">Channel Description:</label>
+            @Html.TextArea("Channeldesc", null, new { @class = "form-control center-block", placeholder = "Enter Channel Description", id = "Channeldesc", required = "true" })
+            <br />
+
+            <input class="form-control btn-primary center-block" type="submit" value="Create Channel" />
+        }
+    </div>
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+@section scripts{
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#example").DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true
+            });
+            $("#subsctiptiontable").DataTable();
+            $("#playlisttable").DataTable();
+
+            $("deleteplaylist").click(function () {
+                alert("Are you sure you want to delete playlist?");
+            });
+        });
+        ShowModelPopUp = function () {
+
+            window.showModalDialog('/Home/OpenModelPopup', "WindowPopup", 'width=400px,height=400px');
+
+        }
+    </script>
+
+}

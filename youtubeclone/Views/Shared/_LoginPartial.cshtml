@@ -3,14 +3,31 @@
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-        </li>
-        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-    </ul>
+        <ul class="nav navbar-nav navbar-right btn-link" style="margin-right:40px;">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="fa fa-user" style="margin-right:5px;font-size:25px;color:white"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><img class="img-responsive center-block" src="../Content/images/profile.png" alt="profile pic" height="100px" width="100px"></li>
+                    <li class="divider"></li>
+                    <li><i class="fa fa-envelope"></i>@Html.ActionLink(User.Identity.GetUserName(), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
+                    <li class="divider"></li>
+                    <li><a href="~/Home/YourChannel"><i class="fa fa-desktop fa-fw"></i> Your Channel</a></li>
+                    <li class="divider"></li>
+                    <li><a href="~/Home/UserGuide"><i class="fa fa-question-circle fa-fw"></i> Help</a></li>
+                    <li class="divider"></li>
+                    <li><a href="~/Home/WatchList"><i class="fa fa-desktop fa-fw"></i> History</a></li>
+                    <li class="divider"></li>
+                    <li><a href="~/Home/WatchLater"><i class="fa fa-clock-o fa-fw"></i> Watch Later</a></li>
+                    <li class="divider"></li>
+                    <li><a href="~/Home/LikedVideos"><i class="fa fa-thumbs-up fa-fw"></i> Liked Videos</a></li>
+                    <li class="divider"></li>
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-sign-out fa-fw"></i>Log off</a></li>
+
+                </ul>
+            </li>
+        </ul>
     }
 }
 else

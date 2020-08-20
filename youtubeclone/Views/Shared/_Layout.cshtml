@@ -3,42 +3,104 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <meta http-equiv="X-UA-Compatible" />
+    <meta name="google" value="notranslate" />
+    <title>@ViewBag.Title - YouTube Website</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/Login.css")
+    @Styles.Render("~/Content/Header.css")
+    @Styles.Render("~/Scripts/header.js")
     @Scripts.Render("~/bundles/modernizr")
 
+    <link rel="stylesheet" href="public/css/mediaelementplayer.min.css" />
+    <link href="public/css/octicons.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="public/css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+    <link rel="stylesheet" type="text/css" href="css/menu.css">
+    <link rel="stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js">
+    <script src="https://code.jquery.com/jquery-1.12.2.min.js" integrity="sha256-lZFHibXzMHo3GGeehn1hudTAP3Sc0uKXBXAzHX1sjtk=" crossorigin="anonymous"></script>
+   
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+
+                <span>
+                    <a href="@Url.Action("Index", "Home")">
+                        <img src="~/Content/logo/logo.png" alt="logo" height="50" width="50" style="float:left;"/>
+                    </a>
+
+                    @Html.ActionLink("StreamLite", "Index", "Home", new { area = "" }, new { @class = "navbar-brand",style="font-size:20px;margin-top:10px;" })
+                </span>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                
+                <div class="nav navbar-nav navbar-left form-inline navbar-form">
+                    @using (Html.BeginForm("Category", "Home", FormMethod.Get))
+                    {
+                        @Html.DropDownList("CategoryID", (List<SelectListItem>)TempData["Category"], "Select Category", htmlAttributes: new { @class = "form-control", style = "margin-top:5px;color:white;background-color:#022a50;", required = "true" })
+
+                        <input class="form-control btn-primary" style="margin-top:5px;" type="submit" id="btnCategory" value="Select" />
+
+                    }
+                </div>
+                <div class="ui-widget nav navbar-nav navbar-left form-inline navbar-form">
+                    @using (Html.BeginForm("Search", "Home", FormMethod.Get))
+                    {
+                        <input class="form-control" id="tags" placeholder="Search" name="tags" type="text" style="width: 700px" required>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    }
+
+                </div>
+
+
                 @Html.Partial("_LoginPartial")
+
+                <ul class="nav navbar-nav navbar-right btn-link">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><input type="image" src="~/Content/images/menu-video.png" style="height:20px;width:20px;"></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="~/Home/UploadVideo"><i class="fa fa-upload"></i> Upload Video</a></li>
+                        </ul>
+                    </li>
+
+
+                </ul>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
+    </nav>
+
+    <div class="container body-content text-center">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+
+            <span><a href="#" class="btn btn-link">@Html.ActionLink("Terms & Conditions", "TermsAndConditions", "Home")</a></span>
+            <span><a href="https://policies.google.com/privacy?hl=en" class="btn btn-link">Privacy Policy</a></span>
+            <span><a href="#" class="btn btn-link">@Html.ActionLink("Contact Us", "Contact", "Home")</a></span>
+            <span><a href="#" class="btn btn-link">@Html.ActionLink("About Us", "About", "Home")</a></span><br /><br />
+            &nbsp;&nbsp;<p class="">&copy; @DateTime.Now.Year - @Html.ActionLink("YouTubeClone", "Index", "Home").  Designed with <span class="fa fa-heart"></span> from Karachi, Pakistan.</p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("https://code.jquery.com/jquery-1.12.4.js")
+    @Scripts.Render("https://code.jquery.com/ui/1.12.1/jquery-ui.js")
+    <script src="~/Scripts/search.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

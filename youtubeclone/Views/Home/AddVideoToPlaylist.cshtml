@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using youtubeclone.Models
+@model Tuple<List<PlaylistModel>>
+
+
+    <div class="container" style="margin-top:50px;">
+        <h1>Add Video To Playlist</h1><br />
+        <div class="container">
+            @using (Html.BeginForm("addvideoinplaylist", "Home", FormMethod.Post))
+            {
+                <input type="number" name="videoid" value="@TempData["videoid"]" style="display:none;visibility:hidden;" required />
+
+                <label for="PlaylistID" style="margin-right:20px;">Select a Playlist:</label>
+                <select id="PlaylistID" name="PlaylistID" required>
+                    @foreach (PlaylistModel item in Model.Item1)
+                    {
+                        <option value="@item.playlist_id">@item.playlist_name</option>
+                    }
+                </select><br />
+                <button class="btn btn-info" type="submit" id="btnAddVideoToPlaylist">Add Video</button>
+            }
+        </div>
+    </div>

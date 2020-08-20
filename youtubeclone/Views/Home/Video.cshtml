@@ -1,0 +1,389 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using Microsoft.AspNet.Identity
+@using youtubeclone.Models
+@model Tuple<List<FileModel>, List<ChannelModel>, List<CommentModel>, List<FileModel>>
+
+<link href="~/Content/style.css" rel="stylesheet" />
+
+<div class="container" style="margin-top:20px;">
+    @foreach (FileModel item in Model.Item1)
+    {
+        <div class="row text-left">
+            <div class="video-container" id="video-container">
+                <div class="playback-animation" id="playback-animation">
+                    <svg class="playback-icons">
+                        <use class="hidden" href="#play-icon"></use>
+                        <use href="#pause"></use>
+                    </svg>
+                </div>
+
+                <video controls class="video" id="video" preload="metadata" poster="" autoplay>
+                    <source src="@Url.Content(item.video_path)" type="video/mp4;codecs:'hvc1'" />
+                </video>
+
+                <div class="video-controls hidden" id="video-controls">
+                    <div class="video-progress">
+                        <progress id="progress-bar" value="0" min="0"></progress>
+                        <input style="margin-top:15px;max-width:780px" class="seek" id="seek" value="0" min="0" type="range" step="1">
+                        <div class="seek-tooltip" id="seek-tooltip">00:00</div>
+                    </div>
+
+                    <div class="bottom-controls">
+                        <div class="left-controls">
+                            <button data-title="Play (k)" id="play">
+                                <svg class="playback-icons">
+                                    <use href="#play-icon"></use>
+                                    <use class="hidden" href="#pause"></use>
+                                </svg>
+                            </button>
+
+                            <div class="volume-controls">
+                                <button data-title="Mute (m)" class="volume-button" id="volume-button">
+                                    <svg>
+                                        <use class="hidden" href="#volume-mute"></use>
+                                        <use class="hidden" href="#volume-low"></use>
+                                        <use href="#volume-high"></use>
+                                    </svg>
+                                </button>
+
+                                <input class="volume" id="volume" value="1"
+                                       data-mute="0.5" type="range" max="1" min="0" step="0.01">
+                            </div>
+
+                            <div class="time">
+                                <time id="time-elapsed">00:00</time>
+                                <span> / </span>
+                                <time id="duration">00:00</time>
+                            </div>
+                        </div>
+
+                        <div class="right-controls">
+                            <button data-title="PIP (p)" class="pip-button" id="pip-button">
+                                <svg>
+                                    <use href="#pip"></use>
+                                </svg>
+                            </button>
+                            <button data-title="Full screen (f)" class="fullscreen-button" id="fullscreen-button">
+                                <svg>
+                                    <use href="#fullscreen"></use>
+                                    <use href="#fullscreen-exit" class="hidden"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <svg style="display: none">
+                <defs>
+                    <symbol id="pause" viewBox="0 0 24 24">
+                        <path d="M14.016 5.016h3.984v13.969h-3.984v-13.969zM6 18.984v-13.969h3.984v13.969h-3.984z"></path>
+                    </symbol>
+
+                    <symbol id="play-icon" viewBox="0 0 24 24">
+                        <path d="M8.016 5.016l10.969 6.984-10.969 6.984v-13.969z"></path>
+                    </symbol>
+
+                    <symbol id="volume-high" viewBox="0 0 24 24">
+                        <path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
+                    </symbol>
+
+                    <symbol id="volume-low" viewBox="0 0 24 24">
+                        <path d="M5.016 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6zM18.516 12q0 2.766-2.531 4.031v-8.063q1.031 0.516 1.781 1.711t0.75 2.32z"></path>
+                    </symbol>
+
+                    <symbol id="volume-mute" viewBox="0 0 24 24">
+                        <path d="M12 3.984v4.219l-2.109-2.109zM4.266 3l16.734 16.734-1.266 1.266-2.063-2.063q-1.547 1.313-3.656 1.828v-2.063q1.172-0.328 2.25-1.172l-4.266-4.266v6.75l-5.016-5.016h-3.984v-6h4.734l-4.734-4.734zM18.984 12q0-2.391-1.383-4.219t-3.586-2.484v-2.063q3.047 0.656 5.016 3.117t1.969 5.648q0 2.203-1.031 4.172l-1.5-1.547q0.516-1.266 0.516-2.625zM16.5 12q0 0.422-0.047 0.609l-2.438-2.438v-2.203q1.031 0.516 1.758 1.688t0.727 2.344z"></path>
+                    </symbol>
+
+                    <symbol id="fullscreen" viewBox="0 0 24 24">
+                        <path d="M14.016 5.016h4.969v4.969h-1.969v-3h-3v-1.969zM17.016 17.016v-3h1.969v4.969h-4.969v-1.969h3zM5.016 9.984v-4.969h4.969v1.969h-3v3h-1.969zM6.984 14.016v3h3v1.969h-4.969v-4.969h1.969z"></path>
+                    </symbol>
+
+                    <symbol id="fullscreen-exit" viewBox="0 0 24 24">
+                        <path d="M15.984 8.016h3v1.969h-4.969v-4.969h1.969v3zM14.016 18.984v-4.969h4.969v1.969h-3v3h-1.969zM8.016 8.016v-3h1.969v4.969h-4.969v-1.969h3zM5.016 15.984v-1.969h4.969v4.969h-1.969v-3h-3z"></path>
+                    </symbol>
+
+                    <symbol id="pip" viewBox="0 0 24 24">
+                        <path d="M21 19.031v-14.063h-18v14.063h18zM23.016 18.984q0 0.797-0.609 1.406t-1.406 0.609h-18q-0.797 0-1.406-0.609t-0.609-1.406v-14.016q0-0.797 0.609-1.383t1.406-0.586h18q0.797 0 1.406 0.586t0.609 1.383v14.016zM18.984 11.016v6h-7.969v-6h7.969z"></path>
+                    </symbol>
+                </defs>
+            </svg>
+        </div>
+
+        <hr />
+        <div class="row text-left">
+
+            <div class="col-sm-5">
+                <h3 style="color:black;">@item.video_title</h3>
+            </div>
+            <div class="col-sm-1">
+                @using (Html.BeginForm("AddLike", "Home", FormMethod.Get))
+                {
+                    <input type="number" name="videoLike" value="@item.video_likes" style="display:none;visibility:hidden;" required />
+                    <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                    <h3><button class="btn" type="submit" style="background:transparent;"><i class="fa fa-thumbs-up" aria-hidden="true" style="font-size:30px;"></i></button>@item.video_likes</h3>
+                }
+            </div>
+            <div class="col-sm-1">
+                @using (Html.BeginForm("AddDislike", "Home", FormMethod.Get))
+                {
+                    <input type="number" name="videoDislike" value="@item.video_dislikes" style="display:none;visibility:hidden;" required />
+                    <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                    <h3><button class="btn" type="submit" style="background:transparent;"><i class="fa fa-thumbs-down" aria-hidden="true" style="font-size:30px;"></i></button>@item.video_dislikes</h3>
+                }
+            </div>
+            <div class="col-sm-1">
+                
+                    <h3><button class="btn" type="submit" data-toggle="modal" data-target="#addreport" style="background:transparent;"><i class="fa fa-flag" aria-hidden="true" style="font-size:30px;"></i></button></h3>
+
+                    <div id="addreport" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Report Video</h4>
+                                </div>
+                                @using (Html.BeginForm("reportvideo", "Home", FormMethod.Get))
+                                {
+                                    <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                                    <div class="modal-body">
+                                        @foreach (var reportcategorysingle in (List<string>)TempData["ReportCategories"])
+                                        {
+                                            <span class="radio-inline row">
+                                                <input checked="checked" class="col-md-1" id="report" name="report" type="radio" value="@reportcategorysingle" style="height:15px; width:15px;margin-left:5px;" required /> <label for="report" style="margin-left:30px;">@reportcategorysingle</label>
+                                            </span>
+
+                                            <br />
+
+                                        }
+                                        <div class="row" style="margin-top:50px;">
+                                            <input class="col-md-1" id="agreement" name="agreement" type="checkbox" value="agreement" required /><label for="report" style="margin-left:20px;">I Agree that providing wrong information will be punishable.</label>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">CANCEL</button>
+                                        <button class="btn btn-info" type="submit" id="btnAddReport" style="float:right;">REPORT</button>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                    
+
+
+            </div>
+            <div class="col-sm-1">
+                @using (Html.BeginForm("AddWatchLater", "Home", FormMethod.Get))
+                {
+                    <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                    <h3><button class="btn" type="submit" style="background:transparent;"><span class="fa-stack fa-2x"><i class="fa fa-list fa-stack-2x" aria-hidden="true" style="font-size:30px;"></i><i class="fa fa-plus fa-stack" aria-hidden="true" style="font-size:20px;color:darkblue;margin-bottom:20px;margin-left:20px;"></i></span>Save</button></h3>
+
+                }
+
+
+            </div>
+
+        </div>
+
+        <div class="row text-left" style="margin-left:10px;">
+            <h4 style="color:grey;">@item.video_views views . @item.publish_datetime</h4>
+        </div>
+        <hr />
+        foreach (ChannelModel channel in Model.Item2)
+        {
+            <div class="container text-left" style="margin-left:10px;">
+                <img class="row img-fluid img-circle col-sm-1" src="@channel.channel_profile_pic" alt="profile" width="50%" required>
+                <div class="row">
+
+                    @if (User.Identity.GetUserId()!=null && User.Identity.GetUserId().Equals(channel.id))
+                    {
+                        <a class="col-sm-4 btn" style="font-size:20px; color:Black;background:transparent;" href="~/Home/YourChannel">@channel.channel_name </a>
+
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("Channel", "Home", FormMethod.Get))
+                        {
+                            <input type="number" name="ChannelID" value="@channel.channel_id" style="display:none;visibility:hidden;" required />
+
+                            <button class="col-sm-4 btn" style="font-size:20px; color:Black;background:transparent;">@channel.channel_name </button>
+
+                        }
+                    }
+                    @if (TempData["subscription"] != null)
+                    {
+                        using (Html.BeginForm("RemoveSubscriptionVideoRedirect", "Home", FormMethod.Post))
+                        {
+                            <input type="number" name="Videoid" value="@item.video_id" style="display:none;visibility:hidden;" required />
+                            <input type="number" name="Channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" required />
+                            <input class="col-sm-9 btn btn-danger" type="submit" value="@TempData["subscription"]" />
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("AddSubscriptionVideoRedirect", "Home", FormMethod.Post))
+                        {
+                            <input type="number" name="Videoid" value="@item.video_id" style="display:none;visibility:hidden;" required />
+                            <input type="number" name="Channelid" value="@channel.channel_id" style="display:none;visibility:hidden;" required />
+                            <input class="col-sm-9 btn btn-danger" type="submit" value="Subscribe" style="margin-left:500px;" />
+                        }
+                    }
+                </div>
+                <div class="row">
+                    <h5 class="col-sm-5" style="color:grey;margin-left:200px;"> @channel.Subscribers k Subscribers</h5>
+
+                </div>
+
+
+            </div>
+        }
+        <hr />
+        <div class="row text-left" style="margin:50px;">
+            <p style="font-size:20px;">
+                @item.video_desc
+            </p>
+        </div>
+        <hr />
+        <div class="container text-left">
+            <h3 style="color:black;">Related Videos</h3>
+        </div>
+        <div class="row">
+            <div id="my-carousel" class="carousel slide">
+                <div class="carousel-inner">
+                    @for (int i = 0; i <= Model.Item4.Count() / 3; i++)
+                    {
+                        <div class="item @if (i == 0)
+                                {<text>active</text>}">
+                            @foreach (FileModel file in Model.Item4.Skip(i * 3).Take(3))
+                            {
+                                <div class="col-sm-4">
+                                    <div class="card mb-2">
+                                        @using (Html.BeginForm("Video", "Home", FormMethod.Get))
+                                        {
+                                            <input type="number" name="VideoID" value="@file.video_id" style="display:none;visibility:hidden;" required />
+                                            <button class="row btn" type="submit" id="btnVideo" style="margin-top:20px;background:transparent;">
+
+                                                <div class="video-section">
+                                                    <video style="width:250px;height:150px;" onmouseover="this.play()" onmouseout="this.pause();" muted="muted">
+                                                        <source class="player" src="@Url.Content(file.video_path)" type="video/mp4;codecs:'hvc1'" />
+                                                    </video>
+                                                </div>
+
+                                                <div class="card-body">
+                                                    <h4 class="card-title">@file.video_title</h4>
+                                                    <p class="card-text">
+                                                        @file.video_desc
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                </div>
+                <!-- Left and right controls -->
+                <a class="left carousel-control" href="#my-carousel" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#my-carousel" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+
+        <hr />
+        <div class="container">
+            <div class="row text-left">
+                @{int commentnumb = 0;}
+                @foreach (CommentModel comment in Model.Item3)
+                {
+                    commentnumb = comment.totalVideoComments;
+
+                }
+                <h4 style="color:grey;">@commentnumb Comments</h4>
+            </div>
+            <div class="row text-left">
+                @using (Html.BeginForm("AddComment", "Home", FormMethod.Get))
+                {
+                    <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                    <img src="~/Content/images/usercomment.png" class="img-fluid img-circle" alt="profile" width="5%" required>
+                    <input placeholder="Add a public comment.." type="text" name="Comment" required />
+                    <button class="btn btn-info" type="submit" style="margin-left:20px;">Add Comment</button>
+                }
+            </div>
+
+        </div>
+
+        <div class="container">
+            @foreach (CommentModel comment in Model.Item3)
+            {
+            <div class="row text-left" style="margin-top:20px;">
+                <img class="col-sm-1 img-fluid img-circle" src="~/Content/images/usercomment.png" alt="profile" width="10%">
+                <h5 class="col-sm-5" style="color:black;">@comment.username<span style="color:grey;"> - @comment.datetime</span></h5>
+                @if (!(User.Identity.GetUserId().IsEmpty()))
+                {
+                    if (User.Identity.GetUserId().Equals(item.Id))
+                    {
+                        using (Html.BeginForm("RemoveComment", "Home", FormMethod.Post))
+                        {
+                            <input type="number" name="CommentID" value="@comment.CommentId" style="display:none;visibility:hidden;" required />
+                            <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                            <button class="btn btn-danger col-sm-1" style="padding:0px;margin-top:5px;">Delete</button>
+                        }
+                        if (User.Identity.GetUserId().Equals(comment.Id))
+                        {
+                            using (Html.BeginForm("UpdateVideoComment", "Home", FormMethod.Post))
+                            {
+                                <input type="number" name="CommentID" value="@comment.CommentId" style="display:none;visibility:hidden;" required />
+                                <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                                <button class="btn btn-info col-sm-1" style="padding:0px;margin-top:5px;" id="updatecoment">Edit</button>
+                            }
+                        }
+                    }
+                    else if (User.Identity.GetUserId().Equals(comment.Id))
+                    {
+                        using (Html.BeginForm("UpdateVideoComment", "Home", FormMethod.Post))
+                        {
+                            <input type="number" name="CommentID" value="@comment.CommentId" style="display:none;visibility:hidden;" required />
+                            <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                            <button class="btn btn-info col-sm-1" style="padding:0px;margin-top:5px;" id="updatecoment">Edit</button>
+                        }
+
+                        using (Html.BeginForm("RemoveComment", "Home", FormMethod.Post))
+                        {
+                            <input type="number" name="CommentID" value="@comment.CommentId" style="display:none;visibility:hidden;" required />
+                            <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" required />
+
+                            <button class="btn btn-danger col-sm-1" style="padding:0px;margin-top:5px;">Delete</button>
+                        }
+
+                    }
+                }
+
+            </div>
+                <p class="row text-left" style="margin-left:100px;">@comment.CommentDesc</p>
+            }
+        </div>
+
+
+    }
+</div>
+<script src="~/Scripts/test.js"></script>

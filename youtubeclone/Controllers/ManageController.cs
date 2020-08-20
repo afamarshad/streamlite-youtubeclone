@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -54,6 +57,7 @@ namespace youtubeclone.Controllers
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
+            TempData["Category"] = CategoryList();
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
                 : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
@@ -81,6 +85,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
         {
+            TempData["Category"] = CategoryList();
             ManageMessageId? message;
             var result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded)
@@ -103,6 +108,7 @@ namespace youtubeclone.Controllers
         // GET: /Manage/AddPhoneNumber
         public ActionResult AddPhoneNumber()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
@@ -112,6 +118,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -136,6 +143,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EnableTwoFactorAuthentication()
         {
+            TempData["Category"] = CategoryList();
             await UserManager.SetTwoFactorEnabledAsync(User.Identity.GetUserId(), true);
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user != null)
@@ -151,6 +159,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DisableTwoFactorAuthentication()
         {
+            TempData["Category"] = CategoryList();
             await UserManager.SetTwoFactorEnabledAsync(User.Identity.GetUserId(), false);
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user != null)
@@ -164,6 +173,7 @@ namespace youtubeclone.Controllers
         // GET: /Manage/VerifyPhoneNumber
         public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
         {
+            TempData["Category"] = CategoryList();
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
             // Send an SMS through the SMS provider to verify the phone number
             return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
@@ -175,6 +185,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -200,6 +211,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemovePhoneNumber()
         {
+            TempData["Category"] = CategoryList();
             var result = await UserManager.SetPhoneNumberAsync(User.Identity.GetUserId(), null);
             if (!result.Succeeded)
             {
@@ -217,6 +229,7 @@ namespace youtubeclone.Controllers
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
@@ -226,6 +239,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -248,6 +262,7 @@ namespace youtubeclone.Controllers
         // GET: /Manage/SetPassword
         public ActionResult SetPassword()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
@@ -257,6 +272,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SetPassword(SetPasswordViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (ModelState.IsValid)
             {
                 var result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
@@ -280,6 +296,7 @@ namespace youtubeclone.Controllers
         // GET: /Manage/ManageLogins
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
+            TempData["Category"] = CategoryList();
             ViewBag.StatusMessage =
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
                 : message == ManageMessageId.Error ? "An error has occurred."
@@ -305,6 +322,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LinkLogin(string provider)
         {
+            TempData["Category"] = CategoryList();
             // Request a redirect to the external login provider to link a login for the current user
             return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"), User.Identity.GetUserId());
         }
@@ -313,6 +331,7 @@ namespace youtubeclone.Controllers
         // GET: /Manage/LinkLoginCallback
         public async Task<ActionResult> LinkLoginCallback()
         {
+            TempData["Category"] = CategoryList();
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
             if (loginInfo == null)
             {
@@ -384,6 +403,34 @@ namespace youtubeclone.Controllers
             Error
         }
 
-#endregion
+        #endregion
+        private static List<SelectListItem> CategoryList()
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            string mainConnection = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(mainConnection))
+            {
+                string query = " SELECT Category_id, Category_name FROM category where Category_id!=110 AND Category_id!=111";
+                using (SqlCommand cmd = new SqlCommand(query))
+                {
+                    cmd.Connection = con;
+                    con.Open();
+                    using (SqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        while (sdr.Read())
+                        {
+                            items.Add(new SelectListItem
+                            {
+                                Text = sdr["Category_name"].ToString(),
+                                Value = sdr["Category_id"].ToString()
+                            });
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            return items;
+        }
     }
 }

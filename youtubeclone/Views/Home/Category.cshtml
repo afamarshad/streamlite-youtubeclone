@@ -1,0 +1,51 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using youtubeclone.Models
+@model Tuple<List<FileModel>,List<ChannelModel>>
+@if (Model.Item1.Count() != 0) { 
+    <div class="container">
+            <div class="container py-3">
+                @foreach (FileModel item in Model.Item1)
+                {
+                <div class="card">
+                    @using (Html.BeginForm("Video", "Home", FormMethod.Get))
+                    {
+                        <input type="number" name="VideoID" value="@item.video_id" style="display:none;visibility:hidden;" />
+
+                        <hr />
+                        <button class="row btn" type="submit" id="btnVideo" style="margin-top:20px;background:transparent;">
+                            <div class="col-md-5">
+                                <div class="video-section">
+                                    <video style="width:250px;height:150px;" onmouseover="this.play()" onmouseout="this.pause();" muted="muted">
+                                        <source class="player" src="@Url.Content(item.video_path)" type="video/mp4;codecs:'hvc1'" />
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card-block px-4 text-left" style="margin-left:20px;">
+                                    <h4 class="card-title">@item.video_title</h4>
+                                    @foreach (ChannelModel channel in Model.Item2)
+                                    {
+                                        if (channel.channel_id.Equals(item.channel_id))
+                                        {
+                                            <p class="card-text">@channel.channel_name - @item.video_views views - @item.publish_datetime</p>
+                                            <p>@item.video_desc</p>
+                                        }
+
+                                    }
+
+                                </div>
+                            </div>
+
+                        </button>
+                    }
+                </div>
+                }
+                </div>
+    </div>
+} else{
+    <h1>No videos found!</h1>
+}

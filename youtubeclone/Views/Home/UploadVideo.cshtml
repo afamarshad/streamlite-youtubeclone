@@ -1,0 +1,57 @@
+﻿@using youtubeclone.Models
+@model Tuple<List<youtubeclone.Models.CategoryModel>>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm("UploadVideo2", "Home", FormMethod.Post, new
+{
+    enctype = "multipart/form-data"
+}))
+{
+    if (ViewBag.channelcount != 0)
+    {
+<div class="well center-block">
+    <img src="~/Content/images/Upload.png" style="height:100px;width:100px;align-content:center;vertical-align:middle;margin-top:30px">
+    <h2 class="text-primary">Upload Video</h2>
+    <p>Note:Title will be choosen from your uploaded video you can change it after uploading.</p>
+    @if (TempData["Error"]!=null)
+    {
+        <h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">@TempData["Error"].ToString()</h3>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <h3 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">@TempData["Success"].ToString()</h3>
+    }
+    <input class="form-control center-block" type="file" name="videofile" id="videofile" accept="video/*"  required/>
+    <br />
+    @using (Html.BeginForm("UploadVideo2", "Home", FormMethod.Post))
+    {
+        @Html.DropDownList("CategoryID", (List<SelectListItem>)TempData["Category"], "Please Select Category of Video", htmlAttributes: new { @class = "form-control center-block" , required = "true" })
+        <br />
+        <span>
+            Note: Playlist Selection is optional
+            @Html.DropDownList("PlaylistID", (List<SelectListItem>)TempData["Playlist"], "Please Select Playlist for Video", htmlAttributes: new { @class = "form-control center-block" })
+        </span>
+            <br />
+        @Html.TextArea("Description", null, new { @class = "form-control center-block", placeholder = "Enter video description here", required = "true" })
+        <br />
+       
+        <label class="center-block">OR</label>
+        @Html.ActionLink("Create a new Playlist?", "YourChannel", "Home", htmlAttributes: new { @class = "center-block", style = "font-size:15px;text-decoration:underline;" })
+        <br />
+        <input class="form-control btn-primary center-block" type="submit" id="btnUpload" value="Upload" />
+    }
+
+</div>
+    }
+    else if (ViewBag.channelcount == 0)
+    {
+        <div class="container" style="margin:50px;">
+            <h1 class="center-block">Oops seems like you haven't created a channel yet!</h1>
+            @Html.ActionLink("Create a Channel?", "YourChannel", "Home", htmlAttributes: new { @class = "center-block", style = "font-size:30px;text-decoration:underline;" })
+        </div>
+     }
+}
+

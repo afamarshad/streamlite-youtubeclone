@@ -1,7 +1,17 @@
 ﻿@{
     ViewBag.Title = "About";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<div class="jumbotron" style="border:5px double lightblue;margin-top:40px;">
+    <div class="container row text-center">
+        <h2>-- Our Mission -- </h2>
+        <h4>To provide a free platform for video uploads.</h4>
+    </div>
+
+    <div class="container row text-center">
+        <h3>@ViewBag.Title</h3>
+        <h4 class="text-justify" style="margin:50px;">@ViewBag.Message</h4>
+        <h4 class="text-justify" style="margin:50px;">@ViewBag.Message</h4>
+        <h4 class="text-justify" style="margin:50px;">@ViewBag.Message</h4>
+    </div>
+</div>

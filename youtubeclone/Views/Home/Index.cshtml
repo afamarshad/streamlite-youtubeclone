@@ -1,31 +1,110 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@*@model youtubeclone.Models.ChannelModel*@
+@using youtubeclone.Models
+@model Tuple<List<CategoryModel>, List<FileModel>>
+@{
+    ViewBag.Title = "Index";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+<style>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    .carousel-control {
+        z-index: 10;
+        top: 2%;
+        width: 30px;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        interval: false
+    }
+
+        .carousel-control.left, .carousel-control.right {
+            background: none;
+            color: black;
+            margin: -5px;
+        }
+</style>
+
+<h1 class="text-primary">Video Categories That You will Love</h1>
+<br />
+ @if (TempData["videoreport"] != null)
+{
+    if (!TempData["videoreport"].Equals("error"))
+    {
+<h4 style="background-color:forestgreen;color:white;padding-top:10px;padding-bottom:10px;">Video Reported Successfully!</h4> <hr />
+    }
+    else
+    {
+<h3 style="background-color:darkred;color:white;padding-top:10px;padding-bottom:10px;">Error reporting video!</h3> <hr />
+    }
+
+}
+@foreach (CategoryModel item in Model.Item1)
+{
+    <div class="row container" style="margin-top:20px;">
+        <div class="panel panel-info">
+            <div class="panel-heading inline">
+                <div class="text-left">
+                    <p> @item.CategoryName</p>
+
+                </div>
+                <div class="text-right">
+                    @using (Html.BeginForm("Category", "Home", FormMethod.Get))
+                    {
+                        <input type="number" name="CategoryID" value="@item.CategoryId" style="display:none;visibility:hidden;" required />
+                        <button class="btn btn-link" type="submit" style="color:white; border:none;text-decoration:underline;">
+                            View All
+                        </button>
+                    }
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="@item.CategoryId" class="carousel slide">
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+
+                        @if (Model.Item1 == null)
+                        {
+                            <span>no categories found</span>
+                        }
+                        else
+                        {
+
+                            int count = 0;
+                            foreach (FileModel file in Model.Item2)
+                            {
+
+                                if (file.category_id.Equals(item.CategoryId) && count != 3)
+                                {
+                                    count = count + 1;
+
+                                    <div class="item active">
+                                        <div class="col-sm-4">
+                                            <div class="card mb-2" style="border:1px solid blue;">
+                                                @using (Html.BeginForm("Video", "Home", FormMethod.Get))
+                                                {
+                                                    <input type="number" name="VideoID" value="@file.video_id" style="display:none;visibility:hidden;" required />
+
+                                                    <button class="row btn" type="submit" id="btnVideo" style="margin-top:20px;background:transparent;">
+
+                                                        <div class="video-section">
+                                                            <video style="width:250px;height:150px;" onmouseover="this.play();" onmouseout="this.pause();" muted="muted">
+                                                                <source class="player" src="@Url.Content(file.video_path)" type="video/mp4;codecs:'hvc1'" />
+                                                            </video>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h4 class="card-title text-left" style="color:black;">@file.video_title</h4>
+                                                        </div>
+                                                    </button>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+}
+
+

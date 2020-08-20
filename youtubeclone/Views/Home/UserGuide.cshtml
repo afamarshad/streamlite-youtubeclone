@@ -1,0 +1,168 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>document.getElementsByTagName("html")[0].className += " js";</script>
+<link rel="stylesheet" href="~/Content/assets/css/style.css">
+
+<h2 style="margin-top:80px;">Help Center</h2>
+<section class="cd-faq js-cd-faq container margin-top-lg margin-bottom-lg">
+    <ul class="cd-faq__categories">
+        <li><a class="cd-faq__category cd-faq__category-selected truncate" href="#basics" style="font-size:16px;">Basics</a></li>
+        <li><a class="cd-faq__category truncate" href="#channel" style="font-size:16px;">Channel</a></li>
+        <li><a class="cd-faq__category truncate" href="#playlist" style="font-size:16px;">Playlist</a></li>
+        <li><a class="cd-faq__category truncate" href="#uploadvideo" style="font-size:16px;">Upload Video</a></li>
+    </ul> <!-- cd-faq__categories -->
+
+    <div class="cd-faq__items" style="font-size:20px;text-align:left;margin-left:50px;">
+        <ul id="basics" class="cd-faq__group">
+            <li class="cd-faq__title"><h2>Basics</h2></li>
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>What can I search for?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>You can search for any video on the basis of video name or you can also search for a channel name in the search bar given on navbar.</p>
+                        <img class="img-responsive" alt="searchbar" src="~/Content/images/searchbar.png" />
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>How can i change my password after I log in?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <ol>
+                            <li>You can simply right click on the profile icon on top right of navbar.</li>
+                            <li>Then click on your email id to go to manage page where you can click on change password or you can also manage your external logins.</li>
+                            <div class="row">
+                                <img class="img-responsive col-md-3" height="150" width="150" alt="searchbar" src="~/Content/images/profileimage.png" />
+                                <img class="img-responsive col-md-9" alt="searchbar" src="~/Content/images/manage.png" />
+                            </div>
+                        </ol>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>Can I use my social media to log in?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>Yes you can log in with your facebook account.</p>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+        </ul>
+
+        <ul id="channel" class="cd-faq__group">
+            <li class="cd-faq__title"><h2>Channel</h2></li>
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>How can i create channel?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <ol>
+                            <li>After registering to the site you can go to profile icon on top and go to YourChannel page.</li>
+                            <li>Once you are on your channel page you will be asked to create a channel.</li>
+                            <li>Fill in the details and your channel will be created.</li>
+                        </ol>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>How can i update my channel details?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>If you want to update any details of your channel you can simply go to profile icon on top right then click on your channel page and then go the about tab.</p>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+        </ul> <!-- cd-faq__group -->
+
+        <ul id="playlist" class="cd-faq__group">
+            <li class="cd-faq__title"><h2>Playlist</h2></li>
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>How can i create a playlist?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <ol>
+                            <li>You can go to your channel page from the profile icon on top right.</li>
+                            <li>Then click on Playlist tab.</li>
+                            <li>Under the heading create playlist fill in the details to create a playlist.</li>
+                        </ol>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>Where can I view the playlists I created?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <ol>
+                            <li>You can go to your channel page from the profile icon on top right.</li>
+                            <li>Then click on Playlist tab.</li>
+                            <li>Scroll a little till you see the heading your playlists.</li>
+                            <li>All your playlists will be displayed here.</li>
+                        </ol>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>Can I update and delete my playlist?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>Yes, you can update and delete your playlists from your channel page in playlists tab where all your playlists are displayed.</p>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+        </ul> <!-- cd-faq__group -->
+
+        <ul id="uploadvideo" class="cd-faq__group">
+            <li class="cd-faq__title"><h2>Upload Video</h2></li>
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>Can I upload a video directly in my channel?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>No, you cannot directly upload videos in your channel you need to create a playlist first.</p>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>Which formats are allowed for uploading my video?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>You can upload your video in any VIDEO format you want.</p>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>Is there a size limit for uploading a video?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>Yes, there is a limit of "limit-of-upload" per video.</p>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+            <li class="cd-faq__item">
+                <a class="cd-faq__trigger" href="#0"><span>Why is the video taking soo long to upload?</span></a>
+                <div class="cd-faq__content">
+                    <div class="text-component">
+                        <p>This is because the video you are trying to upload is big in size, for faster uploads try to upload videos with small lenths.</p>
+                    </div>
+                </div> <!-- cd-faq__content -->
+            </li>
+
+        </ul> <!-- cd-faq__group -->
+    </div> <!-- cd-faq__items -->
+
+    <a href="#0" class="cd-faq__close-panel text-replace">Close</a>
+
+    <div class="cd-faq__overlay" aria-hidden="true"></div>
+</section> <!-- cd-faq -->
+
+<script src="~/Scripts/assets/js/main.js"></script> <!-- util functions included in the CodyHouse framework -->
+<script src="~/Scripts/assets/js/util.js"></script>

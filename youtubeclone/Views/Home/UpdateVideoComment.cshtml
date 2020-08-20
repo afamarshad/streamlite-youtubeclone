@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using youtubeclone.Models
+@model Tuple<List<CommentModel>>
+
+@foreach (CommentModel comment in Model.Item1)
+{
+
+    <div class="container" style="margin-top:50px;">
+        <h1>Edit Video Details</h1><br />
+        <div class="container">
+            @using (Html.BeginForm("updatecomment", "Home", FormMethod.Post))
+            {
+                <label>Comment Description:</label>
+                <input type="number" name="commentid" value="@comment.CommentId" style="display:none;visibility:hidden;" required />
+                <input type="number" name="videoid" value="@TempData["videoid"]" style="display:none;visibility:hidden;" required />
+
+                <input class="text-left" name="CommentDesc" style="color:black;margin-left:55px;" value="@comment.CommentDesc" required /><br />
+                <br />
+                <button class="btn btn-info" type="submit" id="btnUpdate">Update</button>
+            }
+        </div>
+    </div>
+}

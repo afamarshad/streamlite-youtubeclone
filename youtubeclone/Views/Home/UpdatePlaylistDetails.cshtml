@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using youtubeclone.Models
+@model Tuple<List<PlaylistModel>>
+
+@foreach (PlaylistModel item in Model.Item1)
+{
+    <div class="container" style="margin-top:50px;">
+        <h1>Edit Playlist Details</h1><br />
+        <div class="container">
+            @using (Html.BeginForm("UpdatePlaylist", "Home", FormMethod.Post))
+            {
+                <label>Playlist Title:</label>
+                <input type="number" name="PlaylistID" value="@item.playlist_id" style="display:none;visibility:hidden;" required />
+                <input class="text-left" name="playlisttitle" style="color:black;margin-left:55px;" value="@item.playlist_name" required /><br />
+                <br />
+                <label>Playlist Description:</label>
+                <input class="text-left" name="playlistdesc" style="color:black;margin-left:10px;" value="@item.playlist_desc" required />
+                <br /><br />
+                <button class="btn btn-info" type="submit" id="btnVideoUpdate">Update</button>
+            }
+        </div>
+    </div>
+}

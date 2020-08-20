@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -57,6 +60,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            TempData["Category"] = CategoryList();
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -68,9 +72,27 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            TempData["Category"] = CategoryList();
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+
+            // Require the user to have a confirmed email before they can log on.
+            // var user = await UserManager.FindByNameAsync(model.Email);
+            var user = UserManager.Find(model.Email, model.Password);
+            if (user != null)
+            {
+                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
+
+                    // Uncomment to debug locally  
+                    // ViewBag.Link = callbackUrl;
+                    ViewBag.errorMessage = "You must have a confirmed email to log on. "
+                                         + "The confirmation token has been resent to your email account.";
+                    return View("Error");
+                }
             }
 
             // This doesn't count login failures towards account lockout
@@ -96,6 +118,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
         {
+            TempData["Category"] = CategoryList();
             // Require that the user has already logged in via username/password or external login
             if (!await SignInManager.HasBeenVerifiedAsync())
             {
@@ -111,6 +134,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -139,6 +163,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
@@ -149,21 +174,23 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    //  Comment the following line to prevent log in until the user is confirmed.
+                    //  await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    return RedirectToAction("Index", "Home");
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                                    + "before you can log in.";
+
+                    return View("Info");
+                    //return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
@@ -177,6 +204,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
+            TempData["Category"] = CategoryList();
             if (userId == null || code == null)
             {
                 return View("Error");
@@ -190,6 +218,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
@@ -209,12 +238,10 @@ namespace youtubeclone.Controllers
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -226,6 +253,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
@@ -234,6 +262,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
+            TempData["Category"] = CategoryList();
             return code == null ? View("Error") : View();
         }
 
@@ -244,6 +273,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -268,6 +298,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
@@ -278,6 +309,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
+            TempData["Category"] = CategoryList();
             // Request a redirect to the external login provider
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
@@ -287,6 +319,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
+            TempData["Category"] = CategoryList();
             var userId = await SignInManager.GetVerifiedUserIdAsync();
             if (userId == null)
             {
@@ -304,6 +337,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SendCode(SendCodeViewModel model)
         {
+            TempData["Category"] = CategoryList();
             if (!ModelState.IsValid)
             {
                 return View();
@@ -322,6 +356,7 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
+            TempData["Category"] = CategoryList();
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
@@ -354,6 +389,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
+            TempData["Category"] = CategoryList();
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Manage");
@@ -391,6 +427,7 @@ namespace youtubeclone.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            TempData["Category"] = CategoryList();
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
@@ -400,11 +437,13 @@ namespace youtubeclone.Controllers
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
         {
+            TempData["Category"] = CategoryList();
             return View();
         }
 
         protected override void Dispose(bool disposing)
         {
+            TempData["Category"] = CategoryList();
             if (disposing)
             {
                 if (_userManager != null)
@@ -481,5 +520,44 @@ namespace youtubeclone.Controllers
             }
         }
         #endregion
+        private static List<SelectListItem> CategoryList()
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            string mainConnection = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(mainConnection))
+            {
+                string query = " SELECT Category_id, Category_name FROM category where Category_id!=110 AND Category_id!=111";
+                using (SqlCommand cmd = new SqlCommand(query))
+                {
+                    cmd.Connection = con;
+                    con.Open();
+                    using (SqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        while (sdr.Read())
+                        {
+                            items.Add(new SelectListItem
+                            {
+                                Text = sdr["Category_name"].ToString(),
+                                Value = sdr["Category_id"].ToString()
+                            });
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            return items;
+        }
+
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
+        {
+            string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId = userID, code = code }, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(userID, subject,
+               "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            return callbackUrl;
+        }
     }
 }
